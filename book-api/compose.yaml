@@ -1,35 +1,40 @@
-version: "3.8"
-
 services:
-  app:
+  book-app-backend:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - .:/app
+      - .:/app # Mount the current directory to /app in the container
     ports:
-      - "8000:8000"
+      - "8000:8000" # Expose the application on port 8000
     env_file:
-      - .env
+      - .env # Load environment variables from .env file
     depends_on:
-      - database
-
+      - database # Ensure the database service is started before the app
   database:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: app
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: app
-      MYSQL_PASSWORD: app
+      MYSQL_DATABASE: app # The name of the database to create
+      MYSQL_ROOT_PASSWORD: root # The root password for MySQL
+      MYSQL_USER: app # The user to create
+      MYSQL_PASSWORD: app # The password for the user
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 5s
       retries: 5
       start_period: 60s
     ports:
-      - "3306:3306"
+      - "3306:3306" # Expose MySQL on port 3306
     volumes:
-      - database_data:/var/lib/mysql:rw
-
+      - database_data:/var/lib/mysql:rw # Persist MySQL data
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin # Use the official phpMyAdmin image
+      restart: always
+      ports:
+        - "8080:80" # Expose phpMyAdmin on port 8080
+      environment:
+        PMA_HOST: database # The host of the MySQL server
+        PMA_USER: app # The user to connect with
+        PMA_PASSWORD: app # The password for the user
 volumes:
   database_data:
