@@ -1,0 +1,25 @@
+FROM php:8.2-cli
+
+# System-Tools und PHP-Extensions installieren
+RUN apt-get update && apt-get install -y \
+    git unzip libicu-dev libzip-dev \
+    && docker-php-ext-install intl pdo pdo_mysql opcache zip
+
+# Composer installieren
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+# Nur composer.json und lock für schnelleres Caching
+COPY composer.json composer.lock ./
+RUN composer install --no-scripts --no-autoloader
+
+# Dann den Rest der App kopieren
+COPY . .
+
+RUN composer install
+
+# App starten (Port 8000, public-Ordner)
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Expose Port 8000
+EXPOSE 8000
