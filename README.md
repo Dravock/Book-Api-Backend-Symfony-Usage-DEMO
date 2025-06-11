@@ -18,7 +18,7 @@ Ideal für lokale Entwicklung, Tests oder als Grundlage für eigene Backend-Proj
 ### 1. Repository klonen (optional)
 
 ```bash
-git clone https://github.com/dein-benutzername/book-api.git
+git clone https://github.com/Dravock/Book-Api-Backend-Symfony-Usage-DEMO.git
 cd book-api
 ```
 
